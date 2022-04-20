@@ -1,18 +1,20 @@
+
+using GraphiQl;
+using GraphQL;
+using GraphQL.Server;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApi.Interfaces;
+using WebApi.Mutations;
+using WebApi.Query;
+using WebApi.Schemas;
 using WebApi.Services;
+using WebApi.Types;
 
 namespace WebApi
 {
@@ -31,6 +33,12 @@ namespace WebApi
 
             services.AddControllers();
             services.AddTransient<IProduct, ProductService>();
+
+            services.AddSingleton<ProductType>();
+            services.AddSingleton<ProductQuery>();
+            services.AddSingleton<ProductMutation>();
+            services.AddSingleton<ISchema, ProductSchema>();
+            services.AddGraphQL(options => options.EnableMetrics = false).AddSystemTextJson();
 
             services.AddSwaggerGen(c =>
             {
@@ -58,6 +66,9 @@ namespace WebApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseGraphiQl("/graphql");
+            app.UseGraphQL<ISchema>();
         }
     }
 }
