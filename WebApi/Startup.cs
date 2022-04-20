@@ -5,10 +5,12 @@ using GraphQL.Server;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using WebApi.Data;
 using WebApi.Interfaces;
 using WebApi.Mutations;
 using WebApi.Query;
@@ -33,12 +35,13 @@ namespace WebApi
 
             services.AddControllers();
             services.AddTransient<IProduct, ProductService>();
-
-            services.AddSingleton<ProductType>();
-            services.AddSingleton<ProductQuery>();
-            services.AddSingleton<ProductMutation>();
-            services.AddSingleton<ISchema, ProductSchema>();
+            services.AddTransient<ProductType>();
+            services.AddTransient<ProductQuery>();
+            services.AddTransient<ProductMutation>();
+            services.AddTransient<ISchema, ProductSchema>();
             services.AddGraphQL(options => options.EnableMetrics = false).AddSystemTextJson();
+
+            services.AddDbContext<GraphQLDbContext>(options => options.UseSqlServer(@"Data Source= (localdb)\MSSQLLocalDB; Initial Catalog= GraphQLStudies; Integrated Security= True"));
 
             services.AddSwaggerGen(c =>
             {
@@ -47,7 +50,7 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GraphQLDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -67,6 +70,7 @@ namespace WebApi
                 endpoints.MapControllers();
             });
 
+            dbContext.Database.EnsureCreated();
             app.UseGraphiQl("/graphql");
             app.UseGraphQL<ISchema>();
         }

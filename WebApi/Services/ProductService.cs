@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using WebApi.Data;
 using WebApi.Interfaces;
 using WebApi.Models;
 
@@ -7,37 +9,53 @@ namespace WebApi.Services
 {
     public class ProductService : IProduct
     {
-        private static List<Product> _products = new List<Product>()
+        private readonly GraphQLDbContext _dbContext;
+
+        public ProductService(GraphQLDbContext dbContext)
         {
-            new Product() {Id = 0, Name = "Product 1", Price = 10},
-            new Product() { Id = 1, Name = "Product 2", Price = 20}
-        };
+            _dbContext = dbContext;
+        }
 
         public Product Add(Product product)
         {
-            _products.Add(product);
+            _dbContext.Products.Add(product);
+            _dbContext.SaveChanges();
             return product;
         }
 
         public void Delete(int id)
         {
-            _products.RemoveAt(id);
+            var existingProduct =_dbContext.Products.Find(id);
+
+            if (existingProduct is null)
+                return;
+
+            _dbContext.Products.Remove(existingProduct);
+            _dbContext.SaveChanges();
         }
 
         public Product Get(int id)
         {
-            return _products.Find(x => x.Id == id);
+            return _dbContext.Products.Find(id);
         }
 
         public List<Product> GetAll()
         {
-            return _products;
+            return _dbContext.Products.ToList();
         }
 
         public Product Update(int id, Product product)
         {
-            _products[id] = product;
-            return product;
+            var existingProduct = _dbContext.Products.Find(id);
+            if (existingProduct is null)
+                return null;
+
+            existingProduct.Name = product.Name;
+            existingProduct.Price = product.Price;
+
+            _dbContext.Products.Update(existingProduct);
+            _dbContext.SaveChanges();
+            return existingProduct;
         }
     }
 }
