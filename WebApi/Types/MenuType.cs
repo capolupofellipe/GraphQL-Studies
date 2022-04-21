@@ -3,13 +3,13 @@ using WebApi.Models;
 
 namespace WebApi.Types
 {
-    public class ProductType : ObjectGraphType<Product>
+    public class MenuType : ObjectGraphType<Menu>
     {
-        public ProductType()
+        public MenuType()
         {
             Field(x => x.Id);
             Field(x => x.Name);
-            Field(x => x.Price);
+            Field(x => x.ImageUrl);
         }
     }
 }

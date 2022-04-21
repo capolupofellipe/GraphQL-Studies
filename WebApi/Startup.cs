@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WebApi.Data;
 using WebApi.Interfaces;
-using WebApi.Mutations;
 using WebApi.Query;
 using WebApi.Schemas;
 using WebApi.Services;
@@ -32,16 +31,21 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddTransient<IProduct, ProductService>();
-            services.AddTransient<ProductType>();
-            services.AddTransient<ProductQuery>();
-            services.AddTransient<ProductMutation>();
-            services.AddTransient<ISchema, ProductSchema>();
+            services.AddTransient<IMenuService, MenuService>();
+            services.AddTransient<ISubMenuService, SubMenuService>();
+            services.AddTransient<IReservationService, ReservationService>();
+            services.AddTransient<MenuType>();
+            services.AddTransient<SubMenuType>();
+            services.AddTransient<ReservationType>();
+            services.AddTransient<MenuQuery>();
+            services.AddTransient<SubMenuQuery>();
+            services.AddTransient<ReservationQuery>();
+            services.AddTransient<RootQuery>();
+            services.AddTransient<ISchema, RootSchema>();
             services.AddGraphQL(options => options.EnableMetrics = false).AddSystemTextJson();
 
-            services.AddDbContext<GraphQLDbContext>(options => options.UseSqlServer(@"Data Source= (localdb)\MSSQLLocalDB; Initial Catalog= GraphQLStudies; Integrated Security= True"));
+            services.AddDbContext<GraphQLDbContext>(options => options.UseSqlServer(@"Data Source= (localdb)\MSSQLLocalDB; Initial Catalog= CoffeShopDB; Integrated Security= True"));
 
             services.AddSwaggerGen(c =>
             {
