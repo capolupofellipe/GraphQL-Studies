@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WebApi.Data;
 using WebApi.Interfaces;
+using WebApi.Mutations;
 using WebApi.Query;
 using WebApi.Schemas;
 using WebApi.Services;
@@ -36,12 +37,19 @@ namespace WebApi
             services.AddTransient<ISubMenuService, SubMenuService>();
             services.AddTransient<IReservationService, ReservationService>();
             services.AddTransient<MenuType>();
+            services.AddTransient<MenuInputType>();
             services.AddTransient<SubMenuType>();
+            services.AddTransient<SubMenuInputType>();
             services.AddTransient<ReservationType>();
+            services.AddTransient<ReservationInputType>();
             services.AddTransient<MenuQuery>();
             services.AddTransient<SubMenuQuery>();
             services.AddTransient<ReservationQuery>();
             services.AddTransient<RootQuery>();
+            services.AddTransient<MenuMutation>();
+            services.AddTransient<SubMenuMutation>();
+            services.AddTransient<ReservationMutation>();
+            services.AddTransient<RootMutation>();
             services.AddTransient<ISchema, RootSchema>();
             services.AddGraphQL(options => options.EnableMetrics = false).AddSystemTextJson();
 

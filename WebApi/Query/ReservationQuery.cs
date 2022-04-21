@@ -9,7 +9,7 @@ namespace WebApi.Query
     {
         public ReservationQuery(IReservationService reservationService)
         {
-            Field<ListGraphType<SubMenuType>>("reservations", resolve: context => { return reservationService.GetAll(); });
+            Field<ListGraphType<ReservationType>>("reservations", resolve: context => { return reservationService.GetAll(); });
         }
     }
 }
