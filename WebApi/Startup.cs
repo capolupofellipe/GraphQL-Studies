@@ -71,8 +71,8 @@ namespace WebApi
             });
 
             dbContext.Database.EnsureCreated();
-            app.UseGraphiQl("/graphql");
-            app.UseGraphQL<ISchema>();
+            app.UseGraphiQl("/graphiql");
+            app.UseGraphQL<ISchema>("/graphql");
         }
     }
 }
